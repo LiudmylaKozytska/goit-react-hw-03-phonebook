@@ -1,4 +1,8 @@
 import { Component } from 'react';
+import {
+  alertContactInclude,
+  alertAddContactSuccess,
+} from 'components/Alert/Alert';
 import { Form, Title, Input, Button } from './ContactFormStyle';
 export class ContactForm extends Component {
   state = {
@@ -9,13 +13,15 @@ export class ContactForm extends Component {
   handleSubmit = event => {
     event.preventDefault();
     const { name, number } = this.state;
-    const { contacts } = this.props;
+    const contacts = this.props.contacts;
     console.log(contacts);
     const contactIncludes = contacts.some(contact => contact.name === name);
 
     if (contactIncludes) {
-      alert(`${name} is already in contacts.`);
+      alertContactInclude(name);
       return;
+    } else {
+      alertAddContactSuccess();
     }
 
     this.props.onSubmit(name, number);

@@ -1,28 +1,27 @@
 import React, { Component } from 'react';
 import { nanoid } from 'nanoid';
+import Swal from 'sweetalert2';
+
 import { ContactForm } from '../ContactForm/ContactForm';
 import { ContactsList } from '../ContactsList/ContactsList';
 import { FilterContacts } from '../Filter/Filter';
+// import { alertConfirmDelete } from 'components/Alert/Alert';
 
 import { Container, ContactSection } from './AppStyled';
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
 
   handleSubmit = (name, number) => {
     const newContact = {
+      id: nanoid(),
       name,
       number,
-      id: nanoid(),
     };
+    console.log(newContact);
     this.setState(({ contacts }) => ({
       contacts: [newContact, ...contacts],
     }));
@@ -34,15 +33,51 @@ class App extends Component {
 
   getVisibleContacts = () => {
     const { contacts, filter } = this.state;
+    console.log(this.state);
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
 
   onDelete = id => {
-    const { contacts } = this.state;
-    const updatesContacts = contacts.filter(contact => contact.id !== id);
-    this.setState({ contacts: updatesContacts });
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger',
+      },
+      buttonsStyling: false,
+    });
+
+    swalWithBootstrapButtons
+      .fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true,
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonClass: 'btn btn-secondary',
+      })
+      .then(result => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire(
+            'Deleted!',
+            'Your contact has been deleted.',
+            'success'
+          );
+          const { contacts } = this.state;
+          const updatesContacts = contacts.filter(contact => contact.id !== id);
+          this.setState({ contacts: updatesContacts });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          swalWithBootstrapButtons.fire(
+            'Cancelled',
+            'Your contact file is safe :)',
+            'error'
+          );
+        }
+      });
   };
 
   render() {
