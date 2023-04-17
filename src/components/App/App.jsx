@@ -15,13 +15,29 @@ class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const savedContacts = JSON.parse(localStorage.getItem('CONTACT'));
+    console.log(savedContacts);
+    if (savedContacts) {
+      this.setState({ contacts: savedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log(prevProps);
+    console.log(prevState);
+    if (this.state.contacts !== prevState.contacts) {
+      console.log('add new contact');
+      localStorage.setItem('CONTACT', JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleSubmit = (name, number) => {
     const newContact = {
       id: nanoid(),
       name,
       number,
     };
-    console.log(newContact);
     this.setState(({ contacts }) => ({
       contacts: [newContact, ...contacts],
     }));
@@ -33,7 +49,6 @@ class App extends Component {
 
   getVisibleContacts = () => {
     const { contacts, filter } = this.state;
-    console.log(this.state);
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(filter.toLowerCase())
     );
