@@ -6,7 +6,6 @@ export const Form = styled.form`
   flex-direction: column;
   align-items: center;
   width: 500px;
-  margin: auto;
   padding: 60px;
   background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
 `;

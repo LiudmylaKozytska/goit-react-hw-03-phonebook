@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import { Item, Button } from './ContactItemStyle';
+import { ReactComponent as DeleteIcon } from '../icons/deleteIcon.svg';
 
 export const ContactItem = ({ id, name, number, onClick }) => {
   return (
     <Item key={id}>
-      {name}: {number}
       <Button type="button" onClick={() => onClick(id)}>
-        Delete
+        <DeleteIcon width="20" height="20"></DeleteIcon>
       </Button>
+      {name}: {number}
     </Item>
   );
 };
